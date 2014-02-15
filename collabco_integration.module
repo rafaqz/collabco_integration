@@ -1,0 +1,134 @@
+<?php
+/**
+ * @file
+ * Code for the Collabco Integration feature.
+ */
+
+include_once 'collabco_integration.features.inc';
+include_once 'collabco_integration.inc';
+
+/**
+ * Implements hook_init().
+ * 
+ * We set an integration module context early on, this lets us know we are on an
+ * integration page provided by a feature and which content type it is for. 
+ * Which can be usefull, Such as for filtering other views and turning on/off 
+ * contexts.
+ *
+ */
+function collabco_integration_init() { 
+  // Check if the current path starts with node or user.
+  if (((arg(0) === 'node') || (arg(0) === 'user')) && is_numeric(arg(1))) {
+    // Find all Collabco integrations.
+    $integrations = module_invoke_all('collabco_integration');
+    foreach($integrations as $integration) {
+      if (empty($integration['entity']['node'])) {
+        continue;
+      }
+      foreach($integration['entity']['node'] as $bundle => $options) {
+        if (!empty($options['tab'])) {
+          foreach($options['tab'] as $label => $tab_options) {
+            //Check if the integration subpath matches the current subpath.
+            if (arg(2) === $tab_options['subpath']) {
+              context_set('context', 'integration', $bundle);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function collabco_integration_views_pre_view($view, $display_id, $args) {
+  //Find all Collabco integrations.
+  $integrations = module_invoke_all('collabco_integration');
+  foreach ($integrations as $integration) { 
+    if (!empty($integration['views'][$view->name][$display_id]['add_content_link'])) {
+      if (empty($integration['entity']['node'])) {
+        continue;
+      }
+      foreach($integration['entity']['node'] as $bundle => $options) {
+        if (!empty($options['add_content_link'])) {
+          $bundles[$bundle] = $bundle;
+        }
+        $areas = $integration['views'][$view->name][$display_id]['add_content_link']['areas'];
+        collabco_integration_views_content_link($view, $display_id, $bundles, $areas);
+      }
+    }
+  }
+}
+
+/**
+ * hook_collabco_integration().
+ *
+ * A simple way of integrating feature module while keeping them modular, ie
+ * they can be turned off without affecting each other or the site aversely.
+ * 
+ * An array of data provides information on views, page paths and  bundle types
+ * provided by a module so the can be used elsewhere without hardcoding
+ * dependencies.
+ */
+function hook_collabco_integration() {
+  // Add links to views if a module wants to do that.
+  return array(
+    'module_name' => array(
+      // Entity will be used in add content links and possibly elsewhere.
+      'entity' => array(
+        'node'=> array(
+          'bundle' => array(
+            // Provide and add content link for this bundle.
+            'add_content_link' => TRUE,
+            // Provide a link, path and bundle for the group/user tab.
+            // The bundle will be available as the value of the 'integration' context,
+            // which will be active if we are on the provided subpath.
+            'tab' => array(
+              'label' => array(
+                'subpath' => 'subpath',
+                'node' => 'bundle',
+              ),
+            ),
+          ),
+        ),
+      ),
+      // This view will be altered in a standard way for integrations, removing
+      // group or node subscription flags if needed and removing node flag if not.
+      // an add content button is is a group aware add content link to the
+      // provided node bundle.
+      'views' => array(
+        'view' => array(
+          'display_id' => array(
+            'subscribe_flag' => array(
+              'group_type' => 'node',
+              'entity_type' => 'node',
+            ),
+            'add_content_link' => array(
+              'areas' => array('header','footer'),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_collabco_integration().
+ */
+function collabco_integration_collabco_integration() {
+  // Add links to views if a module wants to do that.
+  return array(
+    'collabco_integration' => array(
+      'entity' => array(
+        'node'=> array(
+          'basic_page' => array(
+            'add_content_link' => TRUE,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
