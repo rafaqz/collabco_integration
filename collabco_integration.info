@@ -2,3 +2,6 @@ name = Collabco Integration
 core = 7.x
 package = Collabco
 project = collabco_integration
+
+dependencies[] = views_arg_context
+
