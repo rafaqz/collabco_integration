@@ -38,18 +38,25 @@ function collabco_integration_tabs_integration_links($path, $subpaths = array())
     foreach($integration['entity']['node'] as $bundle => $options) {
       if (!empty($options['tab'])) {
         foreach($options['tab'] as $label => $tab_options) {
+          // Add slash here, not later as provided (home etc) paths may not need slashes.
           $subpaths[$label] = '/' . $tab_options['subpath'];
         }
       }
     }
   }
+  // TODO active tab on subpath.
+  //$current_alias = drupal_get_path_alias($current_path['href']);
+  //$path_alias = drupal_get_path_alias($path);
   // Process all links.
   foreach($subpaths as $label => $subpath) {
     $link_path = $path . $subpath;
     $links[$subpath]['data'] = l($label, $link_path);
     // Set active li for styling.
-    if ($link_path == $current_path['href']) {
-      $links[$subpath]['class'] = array('active');
+    $links[$subpath]['class'] = array(strtolower($label));
+    //$tab_alias = $path_alias . $subpath; 
+    //if (substr_compare($tab_alias, $current_alias, 0) === 0) {
+    if ($link_path === $current_path['href']) {
+      $links[$subpath]['class'][] = 'active';
     }
   }
   return $links;
