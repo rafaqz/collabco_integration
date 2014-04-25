@@ -20,18 +20,26 @@ function hook_collabco_integration() {
     'module_name' => array(
       // Entity will be used in add content links and possibly elsewhere.
       'entity' => array(
-        'node'=> array(
-          'bundle' => array(
+        'your_entity_type'=> array(
+          'your_bundle_type' => array(
             // Provide an add content link for this bundle.
             'add_content_link' => TRUE,
-            // Provide a link, path and bundle for the group or user tab.
+            // Provide a link, path and bundle for content type tabs.
             // The bundle will be available as the value of the 'integration' context,
             // which will be active on the provided subpath.
             'tab' => array(
-              'label' => array(
+              'your_label' => array(
                 'subpath' => 'subpath',
                 'node' => 'bundle',
               ),
+            ),
+            // Tags field. Enabled by default.
+            'tags' => array(
+              'enabled' => FALSE,
+            ),
+            // Image field. Disabled by default.
+            'image'=> array(
+              'enabled' => TRUE,
             ),
           ),
         ),
@@ -43,15 +51,16 @@ function hook_collabco_integration() {
       'views' => array(
         'view' => array(
           'display_id' => array(
+            'add_content_link' => array(
+              'areas' => array('header','footer'),
+            ),
             'subscribe_flag' => array(
               'group_type' => 'node',
               'entity_type' => 'node',
             ),
-            'add_content_link' => array(
-              'areas' => array('header','footer'),
-            ),
+            // Tag filtering. Enabled by default.
             'tag_filter'=> array(
-              'disabled' => False,
+              'enabled' => FALSE,
             ),
           ),
         ),
