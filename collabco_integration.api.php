@@ -22,11 +22,11 @@ function hook_collabco_integration() {
       'entity' => array(
         'node'=> array(
           'bundle' => array(
-            // Provide and add content link for this bundle.
+            // Provide an add content link for this bundle.
             'add_content_link' => TRUE,
-            // Provide a link, path and bundle for the group/user tab.
+            // Provide a link, path and bundle for the group or user tab.
             // The bundle will be available as the value of the 'integration' context,
-            // which will be active if we are on the provided subpath.
+            // which will be active on the provided subpath.
             'tab' => array(
               'label' => array(
                 'subpath' => 'subpath',
@@ -49,6 +49,9 @@ function hook_collabco_integration() {
             ),
             'add_content_link' => array(
               'areas' => array('header','footer'),
+            ),
+            'tag_filter'=> array(
+              'disabled' => False,
             ),
           ),
         ),
