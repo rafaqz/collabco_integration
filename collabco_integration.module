@@ -9,15 +9,13 @@ include_once 'collabco_integration.inc';
 /**
  * Implements hook_init().
  * 
- * We set an integration module context early on, this lets us know we are on an
- * integration page provided by a feature and which content type it is for. 
- * Which can be usefull, Such as for filtering other views and turning on/off 
- * contexts.
- *
+ * We set an integration context early on if we are on an integration page 
+ * provided by a feature. We also set the context value to the content type.
  */
 function collabco_integration_init() { 
   // Check if the current path starts with node or user.
   if (((arg(0) === 'node') || (arg(0) === 'user')) && is_numeric(arg(1))) {
+
     // Find all Collabco integrations.
     $integrations = module_invoke_all('collabco_integration');
     foreach($integrations as $integration) {
@@ -40,6 +38,8 @@ function collabco_integration_init() {
 
 /**
  * Implements hook_views_pre_view().
+ * 
+ * Add "Add content" links to integration views.
  */
 function collabco_integration_views_pre_view($view, $display_id, $args) {
   //Find all Collabco integrations.
@@ -77,4 +77,3 @@ function collabco_integration_collabco_integration() {
     ),
   );
 }
-
