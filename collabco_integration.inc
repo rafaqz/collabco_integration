@@ -25,38 +25,40 @@ function collabco_integration_tabs_integration($path, $subpaths = array()) {
  *
  * @return array - a drupal render array
  */
-function collabco_integration_tabs_integration_links($path, $subpaths = array()) {
-  $links = array();
+function collabco_integration_tabs_integration_links($path, $links = array()) {
   $current_path = menu_get_item();
+  $node = menu_get_object($type = 'node', $position = 1);
   $integrations = module_invoke_all('collabco_integration');
-  // Add link path and label from integration, $subpaths may allready be
-  // populated.
   foreach($integrations as $integration) {
     if (empty($integration['entity']['node'])) {
+      // Skip integrations without node entities.
       continue;
     }
+
+    // Add link path and label from tab integration, $subpaths may allready be
+    // partially populated (with a home tab for example).
     foreach($integration['entity']['node'] as $bundle => $options) {
       if (!empty($options['tab'])) {
         foreach($options['tab'] as $label => $tab_options) {
           // Add slash here, not later as provided (home etc) paths may not need slashes.
-          $subpaths[$label] = '/' . $tab_options['subpath'];
+          $links[$label]['subpath'] = '/' . $tab_options['subpath'];
+          $links[$label]['weight'] = (!empty($tab_options['weight']) ? $tab_options['weight'] : 0);
+          if (!empty($node) && ($node->type === $bundle)) {
+            // Set active li from content type if available.
+            $links[$label]['class'] = array('active');
+          }
         }
       }
     }
   }
-  // TODO active tab on subpath.
-  //$current_alias = drupal_get_path_alias($current_path['href']);
-  //$path_alias = drupal_get_path_alias($path);
-  // Process all links.
-  foreach($subpaths as $label => $subpath) {
-    $link_path = $path . $subpath;
-    $links[$subpath]['data'] = l($label, $link_path);
-    // Set active li for styling.
-    $links[$subpath]['class'] = array(strtolower($label));
-    //$tab_alias = $path_alias . $subpath; 
-    //if (substr_compare($tab_alias, $current_alias, 0) === 0) {
+  foreach($links as $label => $link_options) {
+    $link_path = $path . $link_options['subpath'];
+    $links[$label]['data'] = l($label, $link_path);
+    $links[$label]['class'][] = strtolower($label);
+    $links[$label]['path'] = $link_path;
+    // Set active li from path if available.
     if ($link_path === $current_path['href']) {
-      $links[$subpath]['class'][] = 'active';
+      $links[$label]['class'][] = 'active';
     }
   }
   return $links;
