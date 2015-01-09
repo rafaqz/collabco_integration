@@ -5,8 +5,8 @@
  *
  * @return array - a drupal render array
  */
-function collabco_integration_tabs_integration($path, $subpaths = array()) {
-  $links = collabco_integration_tabs_integration_links($path, $subpaths);
+function integration_tabs_integration($path, $subpaths = array()) {
+  $links = integration_tabs_integration_links($path, $subpaths);
   $tabs = array(
     'header-content-tab' => array(
       '#theme' => 'item_list',
@@ -25,10 +25,10 @@ function collabco_integration_tabs_integration($path, $subpaths = array()) {
  *
  * @return array - a drupal render array
  */
-function collabco_integration_tabs_integration_links($path, $links = array()) {
+function integration_tabs_integration_links($path, $links = array()) {
   $current_path = menu_get_item();
   $node = menu_get_object($type = 'node', $position = 1);
-  $integrations = module_invoke_all('collabco_integration');
+  $integrations = module_invoke_all('integration');
   foreach($integrations as $integration) {
     if (empty($integration['entity']['node'])) {
       // Skip integrations without node entities.
@@ -67,14 +67,14 @@ function collabco_integration_tabs_integration_links($path, $links = array()) {
 /**
  * Add a permissions aware create-content link to a view area.
  */
-function collabco_integration_views_content_link($view, $display_id, $bundles, $areas) {
+function integration_views_content_link($view, $display_id, $bundles, $areas) {
   global $user;
   $group = og_context();
   $gid = !empty($group['gid']) ? $gid = $group['gid'] : NULL; 
   $links = array(
     '#theme' => 'item_list',
     '#attributes' => array('class' => array('add-content-links')),
-    '#items' => collabco_integration_build_node_links($bundles, $gid)
+    '#items' => integration_build_node_links($bundles, $gid)
   );
   // Views wont render the array for us so we render now.
   $rendered_links = drupal_render($links);
@@ -94,12 +94,12 @@ function collabco_integration_views_content_link($view, $display_id, $bundles, $
   }
 }
 
-function collabco_integration_build_node_links($bundles, $gid = NULL, $options = array()) {
+function integration_build_node_links($bundles, $gid = NULL, $options = array()) {
   // Add menu link if the current user can create nodes in the bundle.
   $items = array();
   $group_type = 'node';
   // Build query array for entity reference prepoluate.
-  $options = (!empty($gid) ? array_merge($options, collabco_groups_feature_prepopulate_query($gid)) : array());
+  $options = (!empty($gid) ? array_merge($options, groups_feature_prepopulate_query($gid)) : array());
 
   // This is a group page. Add links only if the user has group permissions.
   if (!empty($gid)) {
