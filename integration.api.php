@@ -1,11 +1,11 @@
 <?php
 /**
  * @file
- * Demonstraion code for the Collabco Integration API.
+ * Demonstraion code for the Integration API.
  */
 
 /**
- * hook_collabco_integration().
+ * hook_integration().
  *
  * A simple way of integrating feature module while keeping them modular, ie
  * they can be turned off without affecting each other or the site aversely.
@@ -14,7 +14,7 @@
  * provided by a module so the can be used elsewhere without hardcoding
  * dependencies.
  */
-function hook_collabco_integration() {
+function hook_integration() {
   // Add links to views if a module wants to do that.
   return array(
     'module_name' => array(

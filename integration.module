@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Code for the Collabco Integration module.
+ * Code for the Integration module.
  */
 
-include_once 'collabco_integration.inc';
+include_once 'integration.inc';
 
 /**
  * Implements hook_init().
@@ -12,12 +12,12 @@ include_once 'collabco_integration.inc';
  * We set an integration context early on if we are on an integration page 
  * provided by a feature. We also set the context value to the content type.
  */
-function collabco_integration_init() { 
+function integration_init() { 
   // Check if the current path starts with node or user.
   if (((arg(0) === 'node') || (arg(0) === 'user')) && is_numeric(arg(1))) {
 
-    // Find all Collabco integrations.
-    $integrations = module_invoke_all('collabco_integration');
+    // Find all  integrations.
+    $integrations = module_invoke_all('integration');
     foreach($integrations as $integration) {
       if (empty($integration['entity']['node'])) {
         continue;
@@ -41,9 +41,9 @@ function collabco_integration_init() {
  * 
  * Add "Add content" links to integration views.
  */
-function collabco_integration_views_pre_view($view, $display_id, $args) {
-  //Find all Collabco integrations.
-  $integrations = module_invoke_all('collabco_integration');
+function integration_views_pre_view($view, $display_id, $args) {
+  //Find all  integrations.
+  $integrations = module_invoke_all('integration');
   foreach ($integrations as $integration) { 
     if (!empty($integration['views'][$view->name][$display_id]['add_content_link'])) {
       if (empty($integration['entity']['node'])) {
@@ -54,19 +54,19 @@ function collabco_integration_views_pre_view($view, $display_id, $args) {
           $bundles[$bundle] = $bundle;
         }
         $areas = $integration['views'][$view->name][$display_id]['add_content_link']['areas'];
-        collabco_integration_views_content_link($view, $display_id, $bundles, $areas);
+        integration_views_content_link($view, $display_id, $bundles, $areas);
       }
     }
   }
 }
 
 /**
- * Implements hook_collabco_integration().
+ * Implements hook_integration().
  */
-function collabco_integration_collabco_integration() {
+function integration_integration() {
   // Add links to views if a module wants to do that.
   return array(
-    'collabco_integration' => array(
+    'integration' => array(
       'entity' => array(
         'node'=> array(
           'basic_page' => array(

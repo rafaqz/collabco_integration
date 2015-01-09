@@ -1,7 +1,7 @@
-name = Collabco Integration
+name = Integration
 core = 7.x
-package = Collabco
-project = collabco_integration
+package = 
+project = integration
 
 dependencies[] = views_arg_context
 
