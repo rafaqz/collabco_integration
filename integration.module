@@ -7,36 +7,6 @@
 include_once 'integration.inc';
 
 /**
- * Implements hook_init().
- * 
- * We set an integration context early on if we are on an integration page 
- * provided by a feature. We also set the context value to the content type.
- */
-function integration_init() { 
-  // Check if the current path starts with node or user.
-  if (((arg(0) === 'node') || (arg(0) === 'user')) && is_numeric(arg(1))) {
-
-    // Find all  integrations.
-    $integrations = module_invoke_all('integration');
-    foreach($integrations as $integration) {
-      if (empty($integration['entity']['node'])) {
-        continue;
-      }
-      foreach($integration['entity']['node'] as $bundle => $options) {
-        if (!empty($options['tab'])) {
-          foreach($options['tab'] as $label => $tab_options) {
-            //Check if the integration subpath matches the current subpath.
-            if (arg(2) === $tab_options['subpath']) {
-              context_set('context', 'integration', $bundle);
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_views_pre_view().
  * 
  * Add "Add content" links to integration views.
@@ -58,22 +28,4 @@ function integration_views_pre_view($view, $display_id, $args) {
       }
     }
   }
-}
-
-/**
- * Implements hook_integration().
- */
-function integration_integration() {
-  // Add links to views if a module wants to do that.
-  return array(
-    'integration' => array(
-      'entity' => array(
-        'node'=> array(
-          'basic_page' => array(
-            'add_content_link' => TRUE,
-          ),
-        ),
-      ),
-    ),
-  );
 }
