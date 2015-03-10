@@ -5,8 +5,11 @@
  */
 function integration_views_content_link($view, $display_id, $bundles, $areas) {
   global $user;
-  $group = og_context();
-  $gid = !empty($group['gid']) ? $gid = $group['gid'] : NULL; 
+  $gid = NULL;
+  if (module_exists("og")) {
+    $group = og_context();
+    $gid = !empty($group['gid']) ? $gid = $group['gid'] : NULL; 
+  }
   $links = array(
     '#theme' => 'item_list',
     '#attributes' => array('class' => array('add-content-links')),
